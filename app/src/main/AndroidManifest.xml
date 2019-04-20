@@ -19,6 +19,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".AddUserActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UserListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UserUpdateDeleteActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
