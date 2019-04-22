@@ -29,7 +29,8 @@ public class HttpJsonParser {
     // by making HTTP POST or GET method
     public JSONObject makeHttpRequest(String url, String method,
                                       Map<String, String> params) {
-
+        Log.w("myApp", "inside makeHttpRequest eee");
+        Log.w("myApp", "inside makeHttpRequest"+url+" eee");
         try {
             Uri.Builder builder = new Uri.Builder();
             URL urlObj;
@@ -44,14 +45,19 @@ public class HttpJsonParser {
 
             }
             if ("GET".equals(method)) {
+                Log.w("myApp", url);
                 url = url + "?" + encodedParams;
+                Log.w("encodedParams", encodedParams);
+                Log.w("url", url);
                 urlObj = new URL(url);
                 urlConnection = (HttpURLConnection) urlObj.openConnection();
                 urlConnection.setRequestMethod(method);
+                Log.w("myApp", "inside if GET");
 
 
             } else {
                 urlObj = new URL(url);
+                Log.w("urlObj", "inside else "+urlObj);
                 urlConnection = (HttpURLConnection) urlObj.openConnection();
                 urlConnection.setRequestMethod(method);
                 urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -59,14 +65,18 @@ public class HttpJsonParser {
                 urlConnection.getOutputStream().write(encodedParams.getBytes());
             }
 
-
+            Log.w("myApp", "OUT OF if GET");
             urlConnection.connect();
+            Log.w("myApp12", ""+params);
             is = urlConnection.getInputStream();
+            Log.w("myApp111212", ""+is);
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            Log.w("myApp", "AFTER READER"+reader);
             StringBuilder sb = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
                 sb.append(line + "\n");
+                Log.w("myApp", line);
             }
             is.close();
             json = sb.toString();
@@ -86,6 +96,9 @@ public class HttpJsonParser {
         }
 
         // return JSON String
+        Log.w("myApp", "finishing makeHttpRequest");
+        Log.w("myApp", json);
+        Log.w("myApp111", jObj.toString());
         return jObj;
 
     }

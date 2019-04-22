@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,13 +30,14 @@ public class UserUpdateDeleteActivity extends AppCompatActivity {
     private static final String KEY_USER_ID = "userID";
     private static final String KEY_USER_NAME = "userName";
     private static final String KEY_PASSWORD = "password";
-    private static final String BASE_URL = "http://127.0.0.1/users/";
+    private static final String BASE_URL = "http://10.225.121.175/users/";
     private String userID;
+    private String userName;
     private String password;
     private EditText userNameEditText;
     private EditText userIDEditText;
     private EditText passwordEditText;
-    private String userName;
+
     private Button deleteButton;
     private Button updateButton;
     private int success;
@@ -45,6 +47,7 @@ public class UserUpdateDeleteActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_update_delete);
+        //Intent intent = new Intent(getApplicationContext());
         Intent intent = getIntent();
         userNameEditText = (EditText) findViewById(R.id.txtUserNameUpdate);
         userIDEditText = (EditText) findViewById(R.id.txtUserIDUpdate);
@@ -52,6 +55,10 @@ public class UserUpdateDeleteActivity extends AppCompatActivity {
 
 
         userID = intent.getStringExtra(KEY_USER_ID);
+        userName = intent.getStringExtra(KEY_USER_NAME);
+        password = intent.getStringExtra(KEY_PASSWORD);
+        Log.w("myApp", "USER ID here "+userID+userName+password);
+        Log.w("myApp", "USER ID "+userID);
         new FetchuserDetailsAsyncTask().execute();
         deleteButton = (Button) findViewById(R.id.btnDelete);
         deleteButton.setOnClickListener(new View.OnClickListener() {
@@ -100,10 +107,14 @@ public class UserUpdateDeleteActivity extends AppCompatActivity {
             HttpJsonParser httpJsonParser = new HttpJsonParser();
             Map<String, String> httpParams = new HashMap<>();
             httpParams.put(KEY_USER_ID, userID);
+            Log.w("myApp", "httpParams "+httpParams);
+
             JSONObject jsonObject = httpJsonParser.makeHttpRequest(
                     BASE_URL + "get_user_details.php", "GET", httpParams);
             try {
+                Log.w("myApp", "inting obj");
                 int success = jsonObject.getInt(KEY_SUCCESS);
+                Log.w("myApp", "success in update uset  "+success);
                 JSONObject user;
                 if (success == 1) {
                     //Parse the JSON response
@@ -186,8 +197,9 @@ public class UserUpdateDeleteActivity extends AppCompatActivity {
             Map<String, String> httpParams = new HashMap<>();
             //Set user_id parameter in request
             httpParams.put(KEY_USER_ID, userID);
+            Log.w("myApp", "deleting this id "+httpParams);
             JSONObject jsonObject = httpJsonParser.makeHttpRequest(
-                    BASE_URL + "delete_user.php", "POST", httpParams);
+                    BASE_URL + "delete_user.php", "GET", httpParams);
             try {
                 success = jsonObject.getInt(KEY_SUCCESS);
             } catch (JSONException e) {
@@ -268,10 +280,12 @@ public class UserUpdateDeleteActivity extends AppCompatActivity {
             httpParams.put(KEY_USER_ID, userID);
             httpParams.put(KEY_USER_NAME, userName);
             httpParams.put(KEY_PASSWORD, password);
+            Log.w("myApp", "YOUR UPDATED PARAMS "+httpParams);
             JSONObject jsonObject = httpJsonParser.makeHttpRequest(
-                    BASE_URL + "update_user.php", "POST", httpParams);
+                    BASE_URL + "update_user.php", "GET", httpParams);
             try {
                 success = jsonObject.getInt(KEY_SUCCESS);
+                Log.w("myApp", "YOUR json "+jsonObject);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

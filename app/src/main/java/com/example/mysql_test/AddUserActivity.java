@@ -25,7 +25,7 @@ public class AddUserActivity extends AppCompatActivity {
     private static final String KEY_USER_NAME = "userName";
     private static final String KEY_PASSWORD = "password";
     private static final String KEY_USER_ID = "userID";
-    private static final String BASE_URL = "http://127.0.0.1/users/";
+    private static final String BASE_URL = "http://10.225.121.175/users/";
     private static String STRING_EMPTY = "";
     private EditText userNameEditText;
     private EditText passwordEditText;
@@ -109,7 +109,7 @@ public class AddUserActivity extends AppCompatActivity {
             httpParams.put(KEY_PASSWORD, password);
             httpParams.put(KEY_USER_ID, userID);
             JSONObject jsonObject = httpJsonParser.makeHttpRequest(
-                    BASE_URL + "add_user.php", "POST", httpParams);
+                    BASE_URL + "add_user.php", "GET", httpParams);
             try {
                 success = jsonObject.getInt(KEY_SUCCESS);
             } catch (JSONException e) {

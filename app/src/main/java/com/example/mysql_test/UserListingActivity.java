@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
@@ -29,11 +30,12 @@ public class UserListingActivity extends AppCompatActivity {
     private static final String KEY_DATA = "data";
     private static final String KEY_USER_ID = "userID";
     private static final String KEY_USER_NAME = "userName";
-    private static final String BASE_URL = "http://127.0.0.1/users/";
+    private static final String KEY_PASSWORD = "password";
+    private static final String BASE_URL = "http://10.225.121.175/users/";
     private ArrayList<HashMap<String, String>> userList;
     private ListView userListView;
     private ProgressDialog pDialog;
-
+//connect real android device with php mysql wamp
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,24 +62,37 @@ public class UserListingActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
+
+            Log.w("myApp", "inside doInBackground");
             HttpJsonParser httpJsonParser = new HttpJsonParser();
+            Log.w("myApp", "After httpJsonParser");
             JSONObject jsonObject = httpJsonParser.makeHttpRequest(
                     BASE_URL + "fetch_all_users.php", "GET", null);
+            Log.w("myApp", "After jsonObject");
             try {
                 int success = jsonObject.getInt(KEY_SUCCESS);
+                Log.w("myApp33", ""+success);
+
                 JSONArray users;
                 if (success == 1) {
+                    Log.w("myApp3333", ""+success);
                     userList = new ArrayList<>();
                     users = jsonObject.getJSONArray(KEY_DATA);
+                    Log.w("myApp3113", ""+success);
                     //Iterate through the response and populate movies list
                     for (int i = 0; i < users.length(); i++) {
+                        Log.w("myApp331", ""+success);
                         JSONObject user = users.getJSONObject(i);
                         Integer userID = user.getInt(KEY_USER_ID);
                         String userName = user.getString(KEY_USER_NAME);
+                        String password = user.getString(KEY_PASSWORD);
                         HashMap<String, String> map = new HashMap<String, String>();
+                        Log.w("myApp142", "userName "+userID+userName+password);
                         map.put(KEY_USER_ID, userID.toString());
                         map.put(KEY_USER_NAME, userName);
+                        map.put(KEY_PASSWORD, password);
                         userList.add(map);
+                        Log.w("myApp123", "userName "+userName);
                     }
                 }
             } catch (JSONException e) {
@@ -101,12 +116,14 @@ public class UserListingActivity extends AppCompatActivity {
      * Updating parsed JSON data into ListView
      * */
     private void populateUserList() {
+        Log.w("myApp", "INSIDE POPULATE");
         ListAdapter adapter = new SimpleAdapter(
                 UserListingActivity.this, userList,
                 R.layout.list_item, new String[]{KEY_USER_ID,
                 KEY_USER_NAME},
                 new int[]{R.id.userID, R.id.userName});
         // updating listview
+        Log.w("myApp", "here3");
         userListView.setAdapter(adapter);
         //Call MovieUpdateDeleteActivity when a movie is clicked
         userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -114,11 +131,18 @@ public class UserListingActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Check for network connectivity
                 if (CheckNetworkStatus.isNetworkAvailable(getApplicationContext())) {
+                    Log.w("myApp", "here2");
+                    String userName = ((TextView) view.findViewById(R.id.userName))
+                            .getText().toString();
+                    String password = ((TextView) view.findViewById(R.id.password))
+                            .getText().toString();
                     String userID = ((TextView) view.findViewById(R.id.userID))
                             .getText().toString();
                     Intent intent = new Intent(getApplicationContext(),
                             UserUpdateDeleteActivity.class);
+                    intent.putExtra(KEY_USER_NAME, userName);
                     intent.putExtra(KEY_USER_ID, userID);
+                    intent.putExtra(KEY_PASSWORD, password);
                     startActivityForResult(intent, 20);
 
                 } else {
